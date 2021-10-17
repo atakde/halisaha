@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * Logger
+ */
+class Logger
+{
+}
