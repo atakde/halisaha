@@ -3,11 +3,12 @@
 $baseDir = str_replace("\\", "/", dirname(__DIR__));
 
 return [
-	'DB_TYPE' => '',
-	'DB_HOST' => '',
-	'DB_NAME' => '',
-	'DB_USER' => '',
-	'DB_PASS' => '',
+	'DB_TYPE' => getenv('DB_TYPE'),
+	'DB_HOST' => getenv('DB_HOST'),
+	'DB_NAME' => getenv('DB_NAME'),
+	'DB_USER' => getenv('DB_USER'),
+	'DB_PASS' => getenv('DB_PASS'),
+	'DB_PORT' => getenv('DB_PORT'),
 	'DB_CHARSET' => '',
 	'CONTROLLER_PATH' => $baseDir . '/controllers/',
 	'VIEW_PATH' => $baseDir . '/views/',
