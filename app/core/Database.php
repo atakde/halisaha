@@ -24,7 +24,7 @@ class Database
             try {
                 $this->connection = new PDO(
                     Config::get('DB_TYPE') . ':host=' . Config::get('DB_HOST') . ";port=" .  Config::get('DB_PORT')  . ';dbname=' .
-                        Config::get('DB_NAME') . ';charset=' . Config::get('DB_CHARSET'),
+                        Config::get('DB_NAME'),
                     Config::get('DB_USER'),
                     Config::get('DB_PASS'),
                     [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ]
