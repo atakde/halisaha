@@ -53,8 +53,8 @@ class FootballMatch
     {
         $db = Database::getFactory()->getConnection();
         $query = $db->prepare("INSERT INTO matches (match_title, match_location, participant_limit, match_date) VALUES (:match_title, :match_location, :participant_limit, :match_date)");
-        $query->bindParam(':match_title', strip_tags($params['match_title']));
-        $query->bindParam(':match_location', strip_tags($params['match_location']));
+        $query->bindParam(':match_title', $params['match_title']);
+        $query->bindParam(':match_location', $params['match_location']);
         $query->bindParam(':participant_limit', $params['participant_limit']);
         $query->bindParam(':match_date', $params['match_date']);
 
@@ -117,7 +117,7 @@ class FootballMatch
 
             $db = Database::getFactory()->getConnection();
             $query = $db->prepare("INSERT INTO players (name, match_id) VALUES (:name, :match_id)");
-            $query->bindParam(':name', strip_tags($params['name']));
+            $query->bindParam(':name', $params['name']);
             $query->bindParam(':match_id', $params['match_id']);
             $insertResult = $query->execute();
 

@@ -15,10 +15,11 @@ class MatchController extends Controller
 	public function addMatch()
 	{
 		$params = [];
-		$params['match_title'] = Request::post('match_title', '');
-		$params['match_location'] = Request::post('match_location', '');
-		$params['participant_limit'] = Request::post('participant_limit', 0);
-		$params['match_date'] = Request::post('match_date', false);
+		$params['match_title'] = Helper::filterXSS(Request::post('match_title', ''), true);
+		$params['match_location'] = Helper::filterXSS(Request::post('match_location', ''), true);
+		$params['participant_limit'] = Helper::filterXSS(Request::post('participant_limit', 0), true);
+		$params['match_date'] = Helper::filterXSS(Request::post('match_date', false), true);
+
 		return (new FootballMatch())->addMatch($params);
 	}
 
@@ -50,13 +51,14 @@ class MatchController extends Controller
 	public function addPlayer()
 	{
 		$params = [];
-		$params['name'] = Request::post('name', '');
+		$params['name'] = Helper::filterXSS(Request::post('name', ''), true);
 		$params['match_id'] = Request::post('match_id');
 
 		if (empty($params['name']) || !$params['match_id']) {
 			$this->view->renderJson(['message' => 'Invalid params.'], 400);
 		}
 
+		$params['match_id'] = intval($params['match_id']);
 		$res = (new FootballMatch())->addPlayer($params);
 
 		$this->view->renderJson(['message' => 'success', 'content' => $res], 200);
