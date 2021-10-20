@@ -17,9 +17,67 @@ class FootballMatch
     {
         $db = Database::getFactory()->getConnection();
 
-        $updateQuery = $db->prepare("UPDATE matches SET status = -1 WHERE id = :id LIMIT 1");
+        $updateQuery = $db->prepare("UPDATE matches SET status = -1 WHERE id = :id");
         $updateQuery->bindParam(':id', $id);
         return $updateQuery->execute();
+    }
+
+    private function insertMatchSetting($key, $value): void
+    {
+        $db = Database::getFactory()->getConnection();
+        $query = $db->prepare("INSERT INTO settings (key, value) VALUES (:key, :value)");
+        $query->bindParam(':key', $key);
+        $query->bindParam(':value', $value);
+        $query->execute();
+    }
+
+    private function getMatchSettings()
+    {
+
+        $db = Database::getFactory()->getConnection();
+        $query = $db->prepare("SELECT key, value FROM settings");
+        $query->execute();
+
+        $result = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $returnArr = [];
+        foreach ($result as $each) {
+            $returnArr[$each['key']] = $each['value'];
+        }
+
+        return $returnArr;
+    }
+
+    private function isMatchSettingExists($key): bool
+    {
+        $db = Database::getFactory()->getConnection();
+        $query = $db->prepare("SELECT 1 FROM settings WHERE key = :key");
+        $query->bindParam(':key', $key);
+        $query->execute();
+
+        if ($query->rowCount() > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function checkMatchSettings(): bool
+    {
+        $keys = ['match_title', 'match_location', 'participant_limit', 'match_date'];
+        foreach ($keys as $key) {
+            if (!$this->isMatchSettingExists($key)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function setMatchConfiguration($params)
+    {
+        foreach ($params as $key => $value) {
+            $this->insertMatchSetting($key, $value);
+        }
     }
 
     public function getLastMatch(): array
@@ -29,11 +87,20 @@ class FootballMatch
         $query->execute();
 
         $result = $query->fetch(\PDO::FETCH_ASSOC);
-
+        $matchConfiguration = $this->getMatchSettings();
         if (!empty($result)) {
             $now = date("Y-m-d H:i:s");
-            if ($result['status'] == 0 && $now >= $result['match_date'] && $this->destroyMatch(intval($result['id']))) {
-                return [];
+            if ($now >= $result['match_date'] && $this->destroyMatch(intval($result['id']))) {
+                $date = strtotime($result['match_date']);
+                $date = strtotime('+7 day', $date);
+                $this->addMatch([
+                    'match_title' => $matchConfiguration['match_title'],
+                    'match_location' => $matchConfiguration['match_location'],
+                    'participant_limit' => (int) $matchConfiguration['participant_limit'] ?? 14,
+                    'match_date' => date('Y-m-d H:i:s', $date)
+                ]);
+
+                return $this->getLastMatch();
             }
 
             $query = $db->prepare("SELECT * FROM players WHERE match_id = :id ORDER BY created_at ASC");
@@ -44,9 +111,15 @@ class FootballMatch
             $result['players'] =  count($playerResult) > 0 ? $playerResult : [];
 
             return $result;
+        } else {
+            $this->addMatch([
+                'match_title' => $matchConfiguration['match_title'],
+                'match_location' => $matchConfiguration['match_location'],
+                'participant_limit' => (int) $matchConfiguration['participant_limit'] ?? 14,
+                'match_date' => date('Y-m-d H:i:s', strtotime($matchConfiguration['match_date']))
+            ]);
+            return $this->getLastMatch();
         }
-
-        return [];
     }
 
     public function addMatch(array $params): bool

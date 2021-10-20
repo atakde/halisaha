@@ -48,6 +48,27 @@ class MatchController extends Controller
 		return $model->getLastMatch();
 	}
 
+	public function setMatchConfiguration()
+	{
+		$params = [];
+		$params['match_title'] = Helper::filterXSS(Request::post('match_title', ''), true);
+		$params['match_location'] = Helper::filterXSS(Request::post('match_location', ''), true);
+		$params['participant_limit'] = Helper::filterXSS(Request::post('participant_limit', 0), true);
+		$params['match_date'] = Helper::filterXSS(Request::post('match_date', false), true);
+
+		if (
+			!is_numeric($params['participant_limit'])
+			|| empty($params['match_title'])
+			|| empty($params['match_date'])
+			|| empty($params['match_location'])
+		) {
+			die("Invalid data.");
+		}
+
+		(new FootballMatch())->setMatchConfiguration($params);
+		Header('Location: ' . Config::get('URL'));
+	}
+
 	public function addPlayer()
 	{
 		$params = [];

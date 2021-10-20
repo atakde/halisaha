@@ -10,8 +10,13 @@ class HomeController extends Controller
 	public function home()
 	{
 		$model = new FootballMatch();
-		$data = [];
-		$data['lastMatch'] = $model->getLastMatch();
-		$this->view->render('home/index', $data);
+
+		if (!$model->checkMatchSettings()) {
+			$this->view->render('home/match-settings');
+		} else {
+			$data = [];
+			$data['lastMatch'] = $model->getLastMatch();
+			$this->view->render('home/index', $data);
+		}
 	}
 }
