@@ -64,19 +64,19 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Title:</label>
+                        <label for="match-title" class="col-form-label">Title:</label>
                         <input type="text" class="form-control" value="<?= $this->lastMatch['match_title'] ?>" id="match-title">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Location:</label>
+                        <label for="match_location" class="col-form-label">Location:</label>
                         <input type="text" class="form-control" value="<?= $this->lastMatch['match_location'] ?>" id="match_location">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Limit:</label>
+                        <label for="participant_limit" class="col-form-label">Limit:</label>
                         <input type="text" class="form-control" value="<?= $this->lastMatch['participant_limit'] ?>" id="participant_limit" disabled>
                     </div>
                     <div class="form-group">
-                        <label for="message-text" class="col-form-label">Date:</label>
+                        <label for="match_date" class="col-form-label">Date:</label>
                         <input type="datetime-local" class="form-control" value="<?= date('Y-m-d\TH:i', strtotime($this->lastMatch['match_date'])) ?>" id="match_date"></textarea>
                     </div>
                 </form>
