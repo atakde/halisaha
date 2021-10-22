@@ -13,9 +13,9 @@ class View
             }
         }
 
-        include_once(Config::get('VIEW_PATH') . 'templates/header.php');
+        include_once(Config::get('VIEW_PATH') . '_templates/header.php');
         include_once(Config::get('VIEW_PATH') . $filename . '.php');
-        include_once(Config::get('VIEW_PATH') . 'templates/footer.php');
+        include_once(Config::get('VIEW_PATH') . '_templates/footer.php');
     }
 
     public function renderJson($data, $code = 200): void
