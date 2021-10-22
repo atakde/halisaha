@@ -162,7 +162,7 @@ class FootballMatch
         $updateQuery->bindParam(':match_date', $params['match_date']);
         $updateQuery->bindParam(':match_id', $params['match_id']);
 
-        return$updateQuery->execute();
+        return $updateQuery->execute();
     }
 
     public function deletePlayer(int $matchId, int $playerId): bool
