@@ -153,6 +153,18 @@ class FootballMatch
         return $query->execute();
     }
 
+    public function updateMatch(array $params): bool
+    {
+        $db = Database::getFactory()->getConnection();
+        $updateQuery = $db->prepare("UPDATE matches SET match_title = :match_title, match_location = :match_location, match_date = :match_date WHERE id = :match_id");
+        $updateQuery->bindParam(':match_title', $params['match_title']);
+        $updateQuery->bindParam(':match_location', $params['match_location']);
+        $updateQuery->bindParam(':match_date', $params['match_date']);
+        $updateQuery->bindParam(':match_id', $params['match_id']);
+
+        return$updateQuery->execute();
+    }
+
     public function deletePlayer(int $matchId, int $playerId): bool
     {
         $matchResult = $this->getMatchById($matchId);

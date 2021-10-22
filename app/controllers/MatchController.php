@@ -34,6 +34,36 @@ class MatchController extends Controller
 		return (new FootballMatch())->deleteMatch(intval($id));
 	}
 
+	public function updateMatch()
+	{
+		$params = [];
+		$params['match_title'] = Helper::filterXSS(Request::post('match_title', ''), true);
+		$params['match_location'] = Helper::filterXSS(Request::post('match_location', ''), true);
+		$params['match_date'] = Helper::filterXSS(Request::post('match_date', false), true);
+		$params['match_id'] = Helper::filterXSS(Request::post('match_id', false), true);
+
+		if (
+			empty($params['match_id'])
+			|| empty($params['match_title'])
+			|| empty($params['match_location'])
+			|| empty($params['match_date'])
+		) {
+			die("Invalid data.");
+		}
+
+		$result = (new FootballMatch())->updateMatch($params);
+
+		$this->view->renderJson(
+			[
+				'message' => 'success', 'content' => [
+					'result' => $result,
+					'data' => $params
+				]
+			],
+			200
+		);
+	}
+
 	public function getAllMatches()
 	{
 		$model = new FootballMatch();

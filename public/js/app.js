@@ -40,4 +40,30 @@ $(function () {
                 alert("Can't deleted.");
             })
     });
+
+    $('#update-settings-btn').click(function () {
+        $.ajax({
+            method: "POST",
+            url: URL + 'match/updateMatch',
+            data: {
+                player_id: $(this).data('id'),
+                match_title: $('#match_title').val(),
+                match_location: $('#match_location').val(),
+                match_date: $('#match_date').val(),
+                match_id: $('#matchId').val()
+            }
+        })
+            .done(function (res) {
+                if (res.content.result) {
+                    $('#exampleModal').modal('hide');
+                    $('.match_title').text(res.content.data.match_title);
+                    $('.match_date').text(res.content.data.match_date);
+                } else {
+                    alert("Error while updating...");
+                }
+            })
+            .fail(function () {
+                alert("Error while updating...");
+            })
+    });
 });
