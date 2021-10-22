@@ -1,11 +1,10 @@
 <?php
 
-class FootballMatch
+class FootballMatch extends Model
 {
     public function getAllMatches(): array
     {
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("SELECT * FROM matches");
+        $query = $this->db->prepare("SELECT * FROM matches");
         $query->execute();
 
         $results = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -15,17 +14,15 @@ class FootballMatch
 
     private function destroyMatch(int $id): bool
     {
-        $db = Database::getFactory()->getConnection();
 
-        $updateQuery = $db->prepare("UPDATE matches SET status = -1 WHERE id = :id");
+        $updateQuery = $this->db->prepare("UPDATE matches SET status = -1 WHERE id = :id");
         $updateQuery->bindParam(':id', $id);
         return $updateQuery->execute();
     }
 
     private function insertMatchSetting($key, $value): void
     {
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("INSERT INTO settings (key, value) VALUES (:key, :value)");
+        $query = $this->db->prepare("INSERT INTO settings (key, value) VALUES (:key, :value)");
         $query->bindParam(':key', $key);
         $query->bindParam(':value', $value);
         $query->execute();
@@ -34,8 +31,7 @@ class FootballMatch
     private function getMatchSettings()
     {
 
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("SELECT key, value FROM settings");
+        $query = $this->db->prepare("SELECT key, value FROM settings");
         $query->execute();
 
         $result = $query->fetchAll(\PDO::FETCH_ASSOC);
@@ -49,8 +45,7 @@ class FootballMatch
 
     private function isMatchSettingExists($key): bool
     {
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("SELECT 1 FROM settings WHERE key = :key");
+        $query = $this->db->prepare("SELECT 1 FROM settings WHERE key = :key");
         $query->bindParam(':key', $key);
         $query->execute();
 
@@ -82,8 +77,7 @@ class FootballMatch
 
     public function getLastMatch(): array
     {
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("SELECT * FROM matches WHERE status != -1 ORDER BY created_at DESC LIMIT 1;");
+        $query = $this->db->prepare("SELECT * FROM matches WHERE status != -1 ORDER BY created_at DESC LIMIT 1;");
         $query->execute();
 
         $result = $query->fetch(\PDO::FETCH_ASSOC);
@@ -103,7 +97,7 @@ class FootballMatch
                 return $this->getLastMatch();
             }
 
-            $query = $db->prepare("SELECT * FROM players WHERE match_id = :id ORDER BY created_at ASC");
+            $query = $this->db->prepare("SELECT * FROM players WHERE match_id = :id ORDER BY created_at ASC");
             $query->bindParam(':id', $result['id']);
             $query->execute();
 
@@ -124,8 +118,7 @@ class FootballMatch
 
     public function addMatch(array $params): bool
     {
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("INSERT INTO matches (match_title, match_location, participant_limit, match_date) VALUES (:match_title, :match_location, :participant_limit, :match_date)");
+        $query = $this->db->prepare("INSERT INTO matches (match_title, match_location, participant_limit, match_date) VALUES (:match_title, :match_location, :participant_limit, :match_date)");
         $query->bindParam(':match_title', $params['match_title']);
         $query->bindParam(':match_location', $params['match_location']);
         $query->bindParam(':participant_limit', $params['participant_limit']);
@@ -136,8 +129,7 @@ class FootballMatch
 
     private function getMatchById(int $id)
     {
-        $db = Database::getFactory()->getConnection();
-        $matchQuery = $db->prepare("SELECT * FROM matches WHERE id = :match_id");
+        $matchQuery = $this->db->prepare("SELECT * FROM matches WHERE id = :match_id");
         $matchQuery->bindParam(':match_id', $id);
         $matchQuery->execute();
 
@@ -146,8 +138,7 @@ class FootballMatch
 
     public function deleteMatch(int $id): bool
     {
-        $db = Database::getFactory()->getConnection();
-        $query = $db->prepare("DELETE FROM matches WHERE id = :id");
+        $query = $this->db->prepare("DELETE FROM matches WHERE id = :id");
         $query->bindParam(':id', $id);
 
         return $query->execute();
@@ -155,8 +146,7 @@ class FootballMatch
 
     public function updateMatch(array $params): bool
     {
-        $db = Database::getFactory()->getConnection();
-        $updateQuery = $db->prepare("UPDATE matches SET match_title = :match_title, match_location = :match_location, match_date = :match_date WHERE id = :match_id");
+        $updateQuery = $this->db->prepare("UPDATE matches SET match_title = :match_title, match_location = :match_location, match_date = :match_date WHERE id = :match_id");
         $updateQuery->bindParam(':match_title', $params['match_title']);
         $updateQuery->bindParam(':match_location', $params['match_location']);
         $updateQuery->bindParam(':match_date', $params['match_date']);
@@ -169,15 +159,14 @@ class FootballMatch
     {
         $matchResult = $this->getMatchById($matchId);
         if ($matchResult) {
-            $db = Database::getFactory()->getConnection();
-            $query = $db->prepare("DELETE FROM players WHERE match_id = :matchId AND id = :playerId");
+            $query = $this->db->prepare("DELETE FROM players WHERE match_id = :matchId AND id = :playerId");
             $query->bindParam(':matchId', $matchId);
             $query->bindParam(':playerId', $playerId);
 
             $deleteResult = $query->execute();
             if ($deleteResult) {
                 $status = (intval($matchResult['participant_count']) - 1 < intval($matchResult['participant_limit'])) ? 1 : 0; // 0 closed 1 open
-                $updateQuery = $db->prepare("UPDATE matches SET participant_count = participant_count - 1, status = :status WHERE id = :match_id");
+                $updateQuery = $this->db->prepare("UPDATE matches SET participant_count = participant_count - 1, status = :status WHERE id = :match_id");
                 $updateQuery->bindParam(':status', $status);
                 $updateQuery->bindParam(':match_id', $matchId);
                 $updateRes = $updateQuery->execute();
@@ -200,15 +189,14 @@ class FootballMatch
                 return false;
             }
 
-            $db = Database::getFactory()->getConnection();
-            $query = $db->prepare("INSERT INTO players (name, match_id) VALUES (:name, :match_id)");
+            $query = $this->db->prepare("INSERT INTO players (name, match_id) VALUES (:name, :match_id)");
             $query->bindParam(':name', $params['name']);
             $query->bindParam(':match_id', $params['match_id']);
             $insertResult = $query->execute();
 
             if ($insertResult) {
                 $status = (intval($matchResult['participant_count']) + 1 === intval($matchResult['participant_limit'])) ? 0 : 1; // 0 closed 1 open
-                $updateQuery = $db->prepare("UPDATE matches SET participant_count = participant_count + 1, status = :status WHERE id = :match_id");
+                $updateQuery = $this->db->prepare("UPDATE matches SET participant_count = participant_count + 1, status = :status WHERE id = :match_id");
                 $updateQuery->bindParam(':status', $status);
                 $updateQuery->bindParam(':match_id', $params['match_id']);
                 $updateRes = $updateQuery->execute();
