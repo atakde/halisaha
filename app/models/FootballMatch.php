@@ -146,10 +146,11 @@ class FootballMatch extends Model
 
     public function updateMatch(array $params): bool
     {
-        $updateQuery = $this->db->prepare("UPDATE matches SET match_title = :match_title, match_location = :match_location, match_date = :match_date WHERE id = :match_id");
+        $updateQuery = $this->db->prepare("UPDATE matches SET match_title = :match_title, match_location = :match_location, match_date = :match_date, created_at = :created_at WHERE id = :match_id");
         $updateQuery->bindParam(':match_title', $params['match_title']);
         $updateQuery->bindParam(':match_location', $params['match_location']);
         $updateQuery->bindParam(':match_date', $params['match_date']);
+        $updateQuery->bindParam(':created_at', $params['created_at']);
         $updateQuery->bindParam(':match_id', $params['match_id']);
 
         return $updateQuery->execute();
@@ -189,9 +190,10 @@ class FootballMatch extends Model
                 return false;
             }
 
-            $query = $this->db->prepare("INSERT INTO players (name, match_id) VALUES (:name, :match_id)");
+            $query = $this->db->prepare("INSERT INTO players (name, match_id, created_at) VALUES (:name, :match_id, :now)");
             $query->bindParam(':name', $params['name']);
             $query->bindParam(':match_id', $params['match_id']);
+            $query->bindParam(':now', date('Y-m-d H:i:s'));
             $insertResult = $query->execute();
 
             if ($insertResult) {
