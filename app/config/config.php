@@ -13,6 +13,7 @@ return [
 	'CONTROLLER_PATH' => $baseDir . '/controllers/',
 	'VIEW_PATH' => $baseDir . '/views/',
 	'MODEL_PATH' => $baseDir . '/models/',
+	'LOG_PATH' => $baseDir . '/logs/',
 	'URL_PUBLIC_FOLDER' => 'public',
 	'URL_PROTOCOL' => '//',
 	'URL_DOMAIN' => $_SERVER['HTTP_HOST'],
