@@ -5,6 +5,9 @@
  */
 class Logger
 {
+
+    public static $logFileName = 'app-logs.txt';
+
     private static function add($message, $type = 'debug'): void
     {
 
@@ -14,7 +17,7 @@ class Logger
             'timestamp' => time()
         ];
 
-        file_put_contents(Config::get('LOG_PATH') . 'app-logs.txt', self::formatLogEntry($logEntry), FILE_APPEND | LOCK_EX);
+        file_put_contents(Config::get('LOG_PATH') . self::$logFileName, self::formatLogEntry($logEntry), FILE_APPEND | LOCK_EX);
     }
 
     private static function formatLogEntry(array $logEntry): string
@@ -24,8 +27,7 @@ class Logger
 
         if (!empty($logEntry)) {
 
-            $logString .= '[' . date('c', $logEntry['timestamp']) . '] : ';
-            unset($logEntry['timestamp']);
+            $logString .= '[' . date('c', $logEntry['timestamp']) . ' - ' . $logEntry['type'] . '] : ';
             $logString .= json_encode($logEntry) . "\n";
         }
 
@@ -34,21 +36,21 @@ class Logger
 
     public static function info($message): void
     {
-        self::add($message, 'info');
+        self::add($message, 'INFO');
     }
 
     public static function warning($message): void
     {
-        self::add($message, 'warning');
+        self::add($message, 'WARNING');
     }
 
     public static function error($message): void
     {
-        self::add($message, 'error');
+        self::add($message, 'ERROR');
     }
 
     public static function debug($message): void
     {
-        self::add($message, 'debug');
+        self::add($message, 'DEBUG');
     }
 }

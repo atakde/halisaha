@@ -197,6 +197,7 @@ class FootballMatch extends Model
             $insertResult = $query->execute();
 
             if ($insertResult) {
+                Logger::info('New player ' . $params['name'] . ' added. match id : ' . $params['match_id'] . '.');
                 $status = (intval($matchResult['participant_count']) + 1 === intval($matchResult['participant_limit'])) ? 0 : 1; // 0 closed 1 open
                 $updateQuery = $this->db->prepare("UPDATE matches SET participant_count = participant_count + 1, status = :status WHERE id = :match_id");
                 $updateQuery->bindParam(':status', $status);
