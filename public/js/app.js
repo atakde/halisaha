@@ -21,6 +21,8 @@ $(function () {
     });
 
     $('.remove-player').click(function () {
+        let playerLine = $(this).parent().parent();
+        let participantCount = $('.participant-count').html();
         $.ajax({
             method: "POST",
             url: URL + 'match/removePlayer',
@@ -31,13 +33,14 @@ $(function () {
         })
             .done(function (res) {
                 if (res.content) {
-                    location.reload();
+                    playerLine.remove();
+                    $('.participant-count').html(participantCount - 1);
                 } else {
-                    alert("Can't added, please check your name.");
+                    alert("Can't removed, please check your name.");
                 }
             })
             .fail(function () {
-                alert("Can't deleted.");
+                alert("Can't removed.");
             })
     });
 

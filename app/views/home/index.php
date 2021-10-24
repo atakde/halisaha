@@ -21,7 +21,7 @@
                                     </svg>
                                 </span>
                             </p>
-                            <p class="text-muted pb-2 match_date"><?= $this->lastMatch['match_date'] ?><span class="text-muted mx-2" style="color: #a2aab7;"><?= $this->lastMatch['participant_count'] . "/" . $this->lastMatch['participant_limit'] ?></span></p>
+                            <p class="text-muted pb-2 match_date"><?= $this->lastMatch['match_date'] ?><span class="text-muted mx-2" style="color: #a2aab7;"><span class="participant-count"><?= $this->lastMatch['participant_count'] ?></span>/<span class="participant-limit"><?= $this->lastMatch['participant_limit'] ?></span></span></p>
                             <?php if ($this->lastMatch['status'] == 1) : ?>
                                 <div class="input-group mb-3">
                                     <input type="text" id="player-name" class="form-control form-control-lg" placeholder="Name" />
@@ -30,7 +30,7 @@
                                     </div>
                                 </div>
                             <?php endif; ?>
-                            <ul class="list-group mb-0">
+                            <ul class="list-group mb-0 player-list">
                                 <?php foreach ($this->lastMatch['players'] as $each) : ?>
                                     <li class="list-group-item d-flex justify-content-between align-items-center border-start-0 border-top-0 border-end-0 border-bottom rounded-0 mb-2">
                                         <div class="d-flex align-items-center">
