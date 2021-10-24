@@ -51,6 +51,7 @@ class MatchController extends Controller
 			die("Invalid data.");
 		}
 
+		$params['match_date'] = date('Y-m-d H:i:s', strtotime($params['match_date']));
 		$result = (new FootballMatch())->updateMatch($params);
 
 		$this->view->renderJson(
