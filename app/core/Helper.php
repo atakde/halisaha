@@ -17,4 +17,12 @@ class Helper
 
         return $value;
     }
+
+    public static function show404()
+    {
+        ob_clean();
+        http_response_code(404);
+        include Config::get('VIEW_PATH') . '_templates/404.php';
+        exit();
+    }
 }

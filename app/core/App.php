@@ -22,10 +22,11 @@ class App
                 } else {
                     $this->controller->{$this->action}();
                 }
+            } else {
+                Helper::show404();
             }
         } else {
-            http_response_code(404);
-            exit();
+            Helper::show404();
         }
     }
 
