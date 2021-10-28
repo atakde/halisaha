@@ -164,7 +164,7 @@ class FootballMatch extends Model
             $query->bindParam(':playerId', $playerId);
 
             $deleteResult = $query->execute();
-            if ($deleteResult) {
+            if ($deleteResult && $query->rowCount() > 0) {
                 $status = (intval($matchResult['participant_count']) - 1 < intval($matchResult['participant_limit'])) ? 1 : 0; // 0 closed 1 open
                 $updateQuery = $this->db->prepare("UPDATE matches SET participant_count = participant_count - 1, status = :status WHERE id = :match_id");
                 $updateQuery->bindParam(':status', $status);
@@ -190,7 +190,7 @@ class FootballMatch extends Model
             }
 
             $query = $this->db->prepare("INSERT INTO players (name, match_id, created_at) VALUES (:name, :match_id, :now)");
-            $query->bindParam(':name', $params['name']);
+            $query->bindParam(':name', strtolower($params['name']));
             $query->bindParam(':match_id', $params['match_id']);
             $query->bindParam(':now', date('Y-m-d H:i:s'));
             $insertResult = $query->execute();
