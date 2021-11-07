@@ -90,7 +90,7 @@ class FootballMatch extends Model
                 $this->addMatch([
                     'match_title' => $matchConfiguration['match_title'],
                     'match_location' => $matchConfiguration['match_location'],
-                    'participant_limit' => (int) $matchConfiguration['participant_limit'] ?? 14,
+                    'participant_limit' => (int) $matchConfiguration['participant_limit'] ?? 20,
                     'match_date' => date('Y-m-d H:i:s', $date)
                 ]);
 
@@ -109,7 +109,7 @@ class FootballMatch extends Model
             $this->addMatch([
                 'match_title' => $matchConfiguration['match_title'],
                 'match_location' => $matchConfiguration['match_location'],
-                'participant_limit' => (int) $matchConfiguration['participant_limit'] ?? 14,
+                'participant_limit' => (int) $matchConfiguration['participant_limit'] ?? 20,
                 'match_date' => date('Y-m-d H:i:s', strtotime($matchConfiguration['match_date']))
             ]);
             return $this->getLastMatch();
